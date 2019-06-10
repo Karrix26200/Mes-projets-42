@@ -1,0 +1,7 @@
+1 - Dans Vbox, file/hostNetworkManager
+creer un nouveau, decocher dhcp et mettre 192.168.56.1/24
+2 - Creer la VM mais avant de la lancer
+Mettre le screen a 300%
+Dans network, ouvrir les ports 2222 de la premiere carte
+Puis creer une autre carte en HostOnlyAdapter en prenant
+la vboxnet0 qu'on a crée

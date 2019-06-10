@@ -1,0 +1,4 @@
+1 - sudo su
+2 - sudo apt-get install -y git
+3 - sudo git clone https://github.com/Karrix26200/roger-skyline
+4 - sudo sh roger-skyline/setup.sh
