@@ -2,7 +2,7 @@
 This is a 15-puzzle game like but the target grid is snail.
 
 # How I solve it ?
-You can choose 3 algoeithms to resolve n-puzzle.
+You can choose 3 algorithms to solve n-puzzle.
 A*: Use step + heuristic function * constant_factor to choose a node in the graph -> f(n) = g(n) + h(n) * c
 GBFS: Use only heuristic function to choose a node in the graph -> f(n) = h(n)
 UCS: Use only step to choose a node in the graph -> f(n) = g(n)
