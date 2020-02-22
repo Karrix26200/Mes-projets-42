@@ -7,9 +7,9 @@ A*: Use step + heuristic function * constant_factor to choose a node in the grap
 GBFS: Use only heuristic function to choose a node in the graph -> f(n) = h(n)  
 UCS: Use only step to choose a node in the graph -> f(n) = g(n)  
 
-f(n) = Evaluation function
-g(n) = Step of node in the graph
-h(n) = Heuristic score of node in the graph
+f(n) = Evaluation function  
+g(n) = Step of node in the graph  
+h(n) = Heuristic score of node in the graph  
 
 # How get score of node in graph ?
 For get a node score, we sum all node elem score.
