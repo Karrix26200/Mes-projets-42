@@ -13,7 +13,7 @@ if __name__ == "__main__":
 
     # Hyperparameters
     learning_rate = 0.5
-    generation = 20
+    generation = 7
 
     # Learning loop
     for i in range(generation):
@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
         # Visualization
         sum_for_t0 *= data_mean
-        precision = 1 - abs(sum_for_t0)
+        precision = 1 - abs(sum_for_t0 ** 2)
         print("generation {}: error = {:.2f}, precision = {:.2f}, T0 = {:.2f}, T1 = {:.2f}".format(i, sum_for_t0, precision, t0, t1))
 
     # Save thetas
