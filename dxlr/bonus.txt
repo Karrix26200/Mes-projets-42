@@ -1,0 +1,5 @@
+- Standardization au lieu de Min Max Scaling
+- Activations: relu, softplus, gauss, heaviside
+- Bias
+- dropout
+- Stochastic Gradient Descent (SGD)
