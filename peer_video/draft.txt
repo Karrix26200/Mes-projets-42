@@ -1,0 +1,47 @@
+Powerpoint INTERACTIF :) (Voir si tout le monde peut powerpoint)
+
+INTRO
+    - Comment j'ai trouvé le stage ? (Intro)
+        La on explique  c quoi le deep
+        La on explique que thibault c un youtubeur et tt
+    - L'équipe
+        - Hierarchi, identité, role
+    - Contexte global
+        La on parle des antécédant de l'entreprise, R&D + presation etc..., startup
+    - Contexte particulier
+        La on resume cque j ai fais
+    - Les enjeux
+        La on dit a quoi ca sert et Lyon
+
+Version longue
+    - Vue d'enssemble
+        La on a une map ou tu vois:
+            - Prestation (Quentin) (Kikleo) (Detection de dechet alimentaire)
+            - Réseau de flow optique (Julien, Tim) (Cost volume CUDA, on explique flownet rapidement)
+            - Réseau de disparité (Remi) (On explique le truck ac la distance horizontale ac les 2 camera et la prediction)
+            - Réseau de détéction d'"Object" (Thibault)
+            - SDK d'optimisation des réseau avec TRT et frozen (Tim) (Expliquer ce que fait TRT et Frozen)
+            - Algo 
+                (Tim, Thibault)
+                (L'algo qui combine tout)
+                (Calcul de plan)
+                (Exploitation du flow et de la disparité)
+                (Optimisation)
+                (Calcul parralelle)
+            - Architecture et SDK (Tim) (Systeme de module)
+            - Interface de controle et visualization V1 (Tim) (Pour Lyon)
+            - Interface de controle et visualization V2 (Tim) (Apres Lyon) (UI un peu comme Unity, on a un systeme de component et on peut ajouter/modifier TOUT facilement)
+
+    - Liste des outils (On la met sur la map en mode sur les nodes):
+        - Python
+            - Kivy (Lib de conception d'UI)
+            - Numpy (Lib de calcul matriciel)
+            - Tensorflow (Lib de conception de réseau de neurone)
+            - TRT (Lib d'optimisation de réseau de neurone)
+            - etc...
+        - C++
+            - Wrapping tensorflow (Permet de créer une fonction optimisé utilisant le GPU pour tensorflow)
+        - Camera Stereo
+
+    - Lyon
+        On dit qu on a fait une demonstration et qu on expliquer notre produit pour faire parler de nous et recuperer des contacts
