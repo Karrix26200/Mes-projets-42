@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import math
 
@@ -83,15 +85,15 @@ class Expression:
         delta = (b ** 2) - (4 * a * c)
         res = ""
         if delta < 0:
-            res = "Discriminant is strictly equal, no solution"
+            res += "Discriminant is strictly equal, no solution"
         elif delta == 0:
-            x0 = -1 * (float(b / (2 * a))
-            res = "Discriminant is strictly equal, the only solution is:\n"
+            x0 = -1 * (float(b / (2 * a)))
+            res += "Discriminant is strictly equal, the only solution is:\n"
             res += str(x0)
         else:
             x1 = (b * -1 - math.sqrt(delta)) / (2 * a)
             x2 = (b * -1 + math.sqrt(delta)) / (2 * a)
-            res = "Discriminant is strictly positive, the two solutions are:\n"
+            res += "Discriminant is strictly positive, the two solutions are:\n"
             res += str(x1) + "\n"
             res += str(x2)
         return res    
@@ -115,7 +117,7 @@ def init_member(iarr, idx):
         idx += 1
     return sign_factor, idx
 
-def main_solver(istr):
+def parse_instructions_1(istr):
     # Parsing
     iarr = istr.split(" ")
 
@@ -152,18 +154,25 @@ def main_solver(istr):
         else:
             sign_factor = 1 if iarr[idx] == "+" else -1
             idx += 1
+    return instructions
 
+def parse_instruction_2(istr):
+        
+
+def main_solver(istr):
+    # instructions = parse_instructions_1(istr)
+    instructions = parse_instructions_2(istr)
     Expression(instructions).solve()
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        exit_error("Error")
+        exit_error("Error empty input")
 
     istr = sys.argv[1]
     # D2 2solution
     # istr = "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"
     # D2 1solution
-    istr = "1.125 * X^0 - 3 * X^1 + 2 * X^2 = 0"
+    # istr = "1.125 * X^0 - 3 * X^1 + 2 * X^2 = 0"
     # D2 0solution
     # istr = "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"
     
