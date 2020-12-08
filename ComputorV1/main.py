@@ -6,21 +6,33 @@ import math
 class Instruction:
     def __init__(self, val, powl):
         self.val = val
+        if type(powl) is float:
+            exit_error("pow must be int")
         self.powl = powl
 
 class Expression:
     def __init__(self, instructions):
         self.instructions = instructions
-        self.degree = self.get_polynomial_degree()
+        # self.degree = self.get_polynomial_degree()
+        self._degree = None
+
+    @property
+    def degree(self):
+        if self._degree is None:
+            self._degree = self.get_polynomial_degree()
+        return self._degree
 
     def reduce_form(self):
         new_instructions = []
-        for powl in range(self.degree + 1):
+        tmp_degree = self.get_polynomial_degree()
+        for powl in range(tmp_degree + 1):
             val = 0
             for instruction in self.instructions:
                 if instruction.powl == powl:
-                    val += instruction.val
+                    val = round(val + instruction.val, 5)
             new_instructions.append(Instruction(val, powl))
+        # Remove instruction with 0 * pow
+        new_instructions[:] = [x for x in new_instructions if x.val != 0]
         self.instructions = new_instructions
         return self.instructions
 
@@ -38,6 +50,8 @@ class Expression:
 
     def solve(self):
         self.reduce_form()
+        if self.degree == -1:
+            self._degree = 0
         if self.degree == 0:
             res = "All real are solutions for degree 0"
         elif self.degree == 1:
@@ -59,6 +73,8 @@ class Expression:
                 sign = "+" if instruction.val >= 0 else "-"
                 val = str(abs(instruction.val))
                 estr += " " + sign + " " + val + " * X^" + str(instruction.powl)
+        if estr == "":
+            estr = "0x"
         return estr + " = 0"
 
     def print_res(self, res):
@@ -68,42 +84,50 @@ class Expression:
         print(res_str)
 
     def solve_degree_1(self):
-        a = self.instructions[1].val
+        a = self.search_instruction(1)
         if a == 0:
             exit_error("a can't be equal to 0")
-        b = self.instructions[0].val
+        b = self.search_instruction(0)
         res = "The solution is:\n"
         res += str(float(b) * -1 / a)
         return res
 
     def solve_degree_2(self):
-        a = self.instructions[2].val
+        a = self.search_instruction(2)
         if a == 0:
             exit_error("a can't be equal to 0")
-        b = self.instructions[1].val
-        c = self.instructions[0].val
+        b = self.search_instruction(1)
+        c = self.search_instruction(0)
         delta = (b ** 2) - (4 * a * c)
         res = ""
         if delta < 0:
             res += "Discriminant is strictly equal, no solution"
         elif delta == 0:
-            x0 = -1 * (float(b / (2 * a)))
+            x0 = -1 * (float(b) / (2 * float(a)))
             res += "Discriminant is strictly equal, the only solution is:\n"
             res += str(x0)
         else:
-            x1 = (b * -1 - math.sqrt(delta)) / (2 * a)
-            x2 = (b * -1 + math.sqrt(delta)) / (2 * a)
+            x1 = (float(b) * -1 - math.sqrt(delta)) / (2 * float(a))
+            x2 = (float(b) * -1 + math.sqrt(delta)) / (2 * float(a))
             res += "Discriminant is strictly positive, the two solutions are:\n"
             res += str(x1) + "\n"
             res += str(x2)
-        return res    
+        return res
+
+    def search_instruction(self, powl):
+        for instruction in self.instructions:
+            if instruction.powl == powl:
+                return instruction.val
+        return 0
     
 def exit_error(err):
-    print(err)
+    print("Error:", err)
     exit(1)
 
 def format_val(val):
-    return float(val) if "." in val else int(val) 
+    if val in "-+=*X^":
+        exit_error("Bad char")
+    return round(float(val), 5) if "." in val else int(val) 
 
 def format_powl( powl):
     return format_val(powl[2:])
@@ -117,74 +141,63 @@ def init_member(iarr, idx):
         idx += 1
     return sign_factor, idx
 
-def parse_instructions_1(istr):
-    # Parsing
-    iarr = istr.split(" ")
+def parse_instructions_2(istr):
+    # Set all char to uppercase
+    istr = istr.upper()
 
-    # Set up first sign factor
-    idx = 0
-    sign_factor, idx = init_member(iarr, idx)
+    # Remove all spaces
+    istr = istr.replace(" ", "")
 
-    instructions = []
-    left_or_right = 1
+    # Split into 2 member
+    members = istr.split("=")
+    instructions_left = parse_member(members[0])
+    tmp_instructions_right = parse_member(members[1])
 
-    # Start parsing loop
-    while True:
-        # Get A
-        curr_val = iarr[idx]
-        idx += 2
-
-        # Get powl
-        curr_powl = iarr[idx]
-        idx += 1
-
-        # Create instruction and put it in good member
-        curr_instruction = Instruction(format_val(curr_val) * sign_factor * left_or_right, format_powl(curr_powl))
-        instructions.append(curr_instruction)
-
-        # Verif is end
-        if idx >= len(iarr):
-            break
-
-        # Parse new + - =
-        if iarr[idx] == "=":
-            left_or_right = -1
-            idx += 1
-            sign_factor, idx = init_member(iarr, idx)
-        else:
-            sign_factor = 1 if iarr[idx] == "+" else -1
-            idx += 1
+    instructions_right = []
+    for instruction in tmp_instructions_right:
+        instruction.val = instruction.val * -1
+        instructions_right.append(instruction)
+    
+    instructions = instructions_left + instructions_right
     return instructions
 
-def parse_instruction_2(istr):
-        
+def parse_member(member):
+    instructions = []
+
+    # Get idx of - or + bot preceded by ^
+    if member[0] not in ["+", "-"]:
+        member = "+" + member
+    idx_lst = []
+    for i in range(len(member)):
+        if member[i] in ["-", "+"] and (i == 0 or member[i-1] != "^"):
+            idx_lst.append(i)
+
+    # Use idx list to create sub member and process them
+    for i in range(len(idx_lst)):
+        if i != len(idx_lst) - 1:
+            part = member[idx_lst[i]:idx_lst[i+1]]
+        else:
+            part = member[idx_lst[i]:len(member)]
+
+        part = part.split("*")
+        powl = 0
+        val = 1
+        for p in part:
+            if "X^" in p:
+                p = p.replace("X^", "")
+                powl = format_val(p)
+            else:
+                val = format_val(p)
+        instructions.append(Instruction(val, powl))
+    return instructions
 
 def main_solver(istr):
-    # instructions = parse_instructions_1(istr)
     instructions = parse_instructions_2(istr)
-    Expression(instructions).solve()
+    expression = Expression(instructions)
+    expression.solve()
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
         exit_error("Error empty input")
-
     istr = sys.argv[1]
-    # D2 2solution
-    # istr = "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"
-    # D2 1solution
-    # istr = "1.125 * X^0 - 3 * X^1 + 2 * X^2 = 0"
-    # D2 0solution
-    # istr = "5 * X^0 + 4 * X^1 - 9.3 * X^2 = 1 * X^0"
-    
-    # D1
-    # istr = "5 * X^0 + 4 * X^1 = 4 * X^0"
-    # D0
-    # istr = "42 * X^0 = 42 * X^0"
-    # D3
-    # istr = "8 * X^0 - 6 * X^1 + 0 * X^2 - 5.6 * X^3 = 3 * X^0"
     main_solver(istr)
-
-'''
-    Premier degree gerer error
-    Gerer 42 * X0 = 42 * X0 -> 0*X0
-'''

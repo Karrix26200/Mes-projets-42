@@ -9,5 +9,5 @@ if __name__ == "__main__":
     for filen in onlyfiles:
         cnt = open(mypath + "/" + filen, 'r').read()
         cnt = "python3 " + cnt[2:]
-        print(cnt)
+        print(filen + " --> " + cnt)
         os.system(cnt)
