@@ -13,7 +13,6 @@ class Instruction:
 class Expression:
     def __init__(self, instructions):
         self.instructions = instructions
-        # self.degree = self.get_polynomial_degree()
         self._degree = None
 
     @property
