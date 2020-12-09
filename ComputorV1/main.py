@@ -3,6 +3,17 @@
 import sys
 import math
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 class Instruction:
     def __init__(self, val, powl):
         self.val = val
@@ -52,13 +63,13 @@ class Expression:
         if self.degree == -1:
             self._degree = 0
         if self.degree == 0:
-            res = "All real are solutions for degree 0"
+            res = bcolors.OKBLUE + "All real are solutions for degree 0" + bcolors.ENDC
         elif self.degree == 1:
             res = self.solve_degree_1()
         elif self.degree == 2:
             res = self.solve_degree_2()
         else:
-            res = "The polynomial degree is stricly greater than 2, I can't solve"
+            res = bcolors.OKBLUE + "The polynomial degree is stricly greater than 2, I can't solve" + bcolors.ENDC
         self.print_res(res)
 
     def encode_form(self):
@@ -67,18 +78,22 @@ class Expression:
         for instruction in self.instructions:
             if first_turn:
                 first_turn = False
-                estr += str(instruction.val) + " * X^" + str(instruction.powl)
+                estr += str(instruction.val)
             else:
                 sign = "+" if instruction.val >= 0 else "-"
                 val = str(abs(instruction.val))
-                estr += " " + sign + " " + val + " * X^" + str(instruction.powl)
+                estr += " " + sign + " " + val
+            if instruction.powl > 0:
+                estr += " * X"
+                if instruction.powl > 1:
+                    estr += "^" + str(instruction.powl)
         if estr == "":
             estr = "0x"
         return estr + " = 0"
 
     def print_res(self, res):
-        res_str = "Reduced form: " + self.encode_form() + "\n"
-        res_str += "Polynomial degree: " + str(self.degree) + "\n"
+        res_str = bcolors.BOLD + bcolors.OKGREEN + "Reduced form: " + bcolors.ENDC + self.encode_form() + "\n"
+        res_str += bcolors.BOLD + bcolors.OKGREEN + "Polynomial degree: " + bcolors.ENDC + str(self.degree) + "\n"
         res_str += res
         print(res_str)
 
@@ -87,7 +102,7 @@ class Expression:
         if a == 0:
             exit_error("a can't be equal to 0")
         b = self.search_instruction(0)
-        res = "The solution is:\n"
+        res = bcolors.OKBLUE + "The solution is:\n" + bcolors.ENDC
         res += str(b * -1 / a)
         return res
 
@@ -98,13 +113,13 @@ class Expression:
         b = self.search_instruction(1)
         c = self.search_instruction(0)
         delta = (b ** 2) - (4 * a * c)
-        res = ""
+        res = bcolors.OKGREEN + bcolors.BOLD + "Discriminant (delta): " + bcolors.ENDC + str(delta) + "\n"
         if delta < 0:
             delta_sqrt = math.sqrt(abs(delta))
             diviseur = 2 * a
             left = (b * -1) / diviseur
             right = delta_sqrt / diviseur
-            res += "Discriminant is strictly negative, the two solutions using complex are:\n"
+            res += bcolors.OKBLUE + "Discriminant is strictly negative, the two solutions using complex are:\n" + bcolors.ENDC
             x1_op = "+"
             x2_op = "-"
             if right < 0:
@@ -116,18 +131,23 @@ class Expression:
             if left != 0:
                 x1_str = str(left) + " " + x1_str
                 x2_str = str(left) + " " + x2_str
-            res += x1_str + "\n"
-            res += x2_str
+
+            x1_str = bcolors.WARNING + "(-b - √(|delta|) i) / 2a" + bcolors.ENDC + " = " + bcolors.OKCYAN + "(-("+str(b)+")) - √(|"+str(delta)+"|) i) / 2("+str(a)+")" + bcolors.ENDC + " = " + bcolors.OKGREEN + str(x1_str) + bcolors.ENDC 
+            x2_str = bcolors.WARNING + "(-b + √(|delta|) i) / 2a" + bcolors.ENDC + " = " + bcolors.OKCYAN + "(-("+str(b)+")) + √(|"+str(delta)+"|) i) / 2("+str(a)+")" + bcolors.ENDC + " = " + bcolors.OKGREEN + str(x2_str) + bcolors.ENDC 
+            res += str(x1_str) + "\n" + str(x2_str) + bcolors.ENDC
+
         elif delta == 0:
             x0 = -1 * (b / (2 * a))
-            res += "Discriminant is strictly equal, the only solution is:\n"
-            res += str(x0)
+            res += bcolors.OKBLUE + "Discriminant is strictly equal, the only solution is:\n" + bcolors.ENDC
+            x0_str = bcolors.WARNING + "-(b / (2a))" + bcolors.ENDC + " = " + bcolors.OKCYAN + "-("+str(b)+" / (2("+str(a)+")))" + bcolors.ENDC + " = " + bcolors.OKGREEN + str(x0) + bcolors.ENDC
+            res += x0_str
         else:
             x1 = (b * -1 - math.sqrt(delta)) / (2 * a)
             x2 = (b * -1 + math.sqrt(delta)) / (2 * a)
-            res += "Discriminant is strictly positive, the two solutions are:\n"
-            res += str(x1) + "\n"
-            res += str(x2)
+            res += bcolors.OKBLUE + "Discriminant is strictly positive, the two solutions are:\n" + bcolors.ENDC
+            x1_str = bcolors.WARNING + "(-b - √(delta)) / 2a" + bcolors.ENDC + " = " + bcolors.OKCYAN + "(-("+str(b)+")) - √("+str(delta)+")) / 2("+str(a)+")" + bcolors.ENDC + " = " + bcolors.OKGREEN + str(x1) + bcolors.ENDC 
+            x2_str = bcolors.WARNING + "(-b + √(delta)) / 2a" + bcolors.ENDC + " = " + bcolors.OKCYAN + "(-("+str(b)+")) + √("+str(delta)+")) / 2("+str(a)+")" + bcolors.ENDC + " = " + bcolors.OKGREEN + str(x2) + bcolors.ENDC 
+            res += str(x2_str) + "\n" + str(x1_str) + bcolors.ENDC
         return res
 
     def search_instruction(self, powl):
@@ -137,7 +157,7 @@ class Expression:
         return float(0)
     
 def exit_error(err):
-    print("Error:", err)
+    print(bcolors.BOLD + bcolors.FAIL + "Error: " + bcolors.ENDC + bcolors.FAIL + str(err) + bcolors.ENDC)
     exit(1)
 
 def format_val(val):
