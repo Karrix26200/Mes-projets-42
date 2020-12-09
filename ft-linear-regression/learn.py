@@ -26,7 +26,6 @@ if __name__ == "__main__":
         current_curve = []
         for km, price in zip(n_km_list, n_price_list):
             prediction = predict(km, t0, t1)
-            # print(unnormalize(prediction, price_decay, price_max))
             current_curve.append(unnormalize(prediction, price_decay, price_max))
             error = prediction - price
             sum_for_t0 += error
