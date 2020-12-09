@@ -88,7 +88,7 @@ class Expression:
             exit_error("a can't be equal to 0")
         b = self.search_instruction(0)
         res = "The solution is:\n"
-        res += str(float(b) * -1 / a)
+        res += str(b * -1 / a)
         return res
 
     def solve_degree_2(self):
@@ -100,14 +100,31 @@ class Expression:
         delta = (b ** 2) - (4 * a * c)
         res = ""
         if delta < 0:
-            res += "Discriminant is strictly equal, no solution"
+            delta_sqrt = math.sqrt(abs(delta))
+            diviseur = 2 * a
+            left = (b * -1) / diviseur
+            right = delta_sqrt / diviseur
+            res += "Discriminant is strictly negative, the two solutions using complex are:\n"
+            x1_op = "+"
+            x2_op = "-"
+            if right < 0:
+                right = abs(right)
+                x1_op = "-"
+                x2_op = "+"
+            x1_str = x1_op + " " + str(right) + " i"
+            x2_str = x2_op + " " + str(right) + " i"
+            if left != 0:
+                x1_str = str(left) + " " + x1_str
+                x2_str = str(left) + " " + x2_str
+            res += x1_str + "\n"
+            res += x2_str
         elif delta == 0:
-            x0 = -1 * (float(b) / (2 * float(a)))
+            x0 = -1 * (b / (2 * a))
             res += "Discriminant is strictly equal, the only solution is:\n"
             res += str(x0)
         else:
-            x1 = (float(b) * -1 - math.sqrt(delta)) / (2 * float(a))
-            x2 = (float(b) * -1 + math.sqrt(delta)) / (2 * float(a))
+            x1 = (b * -1 - math.sqrt(delta)) / (2 * a)
+            x2 = (b * -1 + math.sqrt(delta)) / (2 * a)
             res += "Discriminant is strictly positive, the two solutions are:\n"
             res += str(x1) + "\n"
             res += str(x2)
@@ -116,8 +133,8 @@ class Expression:
     def search_instruction(self, powl):
         for instruction in self.instructions:
             if instruction.powl == powl:
-                return instruction.val
-        return 0
+                return float(instruction.val)
+        return float(0)
     
 def exit_error(err):
     print("Error:", err)
